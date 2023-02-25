@@ -1,8 +1,8 @@
 <script>
-    import "../app.css";
+    import '../app.css';
 </script>
 
-<slot/>
+<slot />
 
 <style lang="postcss">
     :global(html) {
