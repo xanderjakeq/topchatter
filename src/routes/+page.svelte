@@ -1,9 +1,8 @@
 <script lang="ts">
-    import messages from '$lib/MOCK_DATA.json';
     import { onMount } from 'svelte';
+    import Modal from '$lib/Modal.svelte';
 
-    export let data;
-
+    let messages: { message: string }[] = [];
     let guesses: string[] = [];
     let guessMatchs: string[] = [];
 
@@ -12,6 +11,21 @@
     let input = '';
     let inputElement: HTMLInputElement;
     let inputFocused = false;
+
+    $: showModal = (() => {
+        if (!lastGuessMatch) {
+            return false;
+        }
+
+        for (let i = 0; i < lastGuessMatch.length; i++) {
+            if (lastGuessMatch[i] != '1') {
+                return false;
+            }
+        }
+        return true;
+    })();
+
+    //let showModal = true;
 
     const addGuess = async () => {
         let guessMatch = (await (await fetch(`/api?guess=${input}`)).json()).hint;
@@ -35,9 +49,18 @@
         }
     }
 
-    onMount(async () => {
-        guessMatchs = [(await (await fetch(`/api?guess=${input}`)).json()).hint];
+    const getNewUser = async () => {
+        const data = await (await fetch(`/api?guess=${input}`)).json();
+        if (data.messages) {
+            messages = data.messages;
+            console.log(messages)
+        }
+        guessMatchs = [data.hint];
         guesses = [new Array(guessMatchs[0].length + 1).join(' ')];
+    };
+
+    onMount(async () => {
+        await getNewUser();
     });
 </script>
 
@@ -106,10 +129,20 @@
         >
             {#each messages as message}
                 <div class="flex m-5 my-1">
-                    <div class="min-w-[10px] bg-purple-900 mr-2" />
-                    <p>{message.message}</p>
+                    <div class="min-w-[10px] bg-purple-500 mr-2" />
+                    <p>{message}</p>
                 </div>
             {/each}
         </div>
     </div>
 </div>
+
+<Modal bind:showModal>
+    <h1>You Win!</h1>
+    <p>
+        guesses: {guesses.length - 1}
+    </p>
+    <button on:click={getNewUser} class="rounded-md bg-purple-500 p-2 text-white">
+        play again
+    </button>
+</Modal>
