@@ -8,7 +8,7 @@ const opts = {
         username: process.env.BOT_USERNAME,
         password: process.env.BOT_TOKEN
     },
-    channels: ['theprimeagen', 'theo', 'stray228']
+    channels: ['theprimeagen', 'teej_dv', 'bashbunni']
 };
 
 let exiting = false;
@@ -22,6 +22,7 @@ client.on('connected', onConnectedHandler);
 
 const stream = {};
 
+//TODO: load existing data properly from dirtyData. COMMENT OUT WRITING TO FILE
 for (let i = 0; i < opts.channels.length; i++) {
     stream[opts.channels[i]] = {
         users: new Map()
@@ -38,6 +39,7 @@ function onMessageHandler(target, context, msg, self) {
     } // Ignore messages from the bot
 
     const { username } = context;
+    console.log(".");
 
     const userMap = stream[target].users;
 

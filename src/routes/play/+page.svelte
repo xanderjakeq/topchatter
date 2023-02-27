@@ -134,9 +134,6 @@
     onMount(async () => {
         stream = $page.url.searchParams.get('stream') || '';
 
-        console.log($page.url.searchParams.get('stream'))
-        console.log(stream)
-
         let storedChatter = localStorage.getItem('chatter');
         if (storedChatter) {
             chatter = Number(storedChatter);
@@ -235,7 +232,7 @@
                 {#if gaveUp}
                     guess we'll never know
                 {:else}
-                    {guesses[0]}
+                    @{guesses[0]}
                 {/if}
             </h2>
             <p>

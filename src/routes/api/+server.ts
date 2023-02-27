@@ -11,21 +11,24 @@ type Stream = {
             messages: string[];
         }
     >;
+    sortedUsers: string[];
 };
 
-export const GET = (({ url, fetch }) => {
+export const GET = (({ url }) => {
+    const stream = url.searchParams.get('stream');
+
+    if (!stream) return json({ message: "who's stream??" }, { status: 400 });
+
     const guess = url.searchParams.get('guess');
+    const chatter = Number(url.searchParams.get('chatter')) || 0;
 
-    const users = (streams as Record<string, Stream>)['#stray228'].users;
-    const username = Object.keys(users)[0];
-
-    const messages: string[] = users[username].messages;
-
-    console.log(username)
+    const { users, sortedUsers } = (streams as Record<string, Stream>)[`#${stream}`];
+    const username = sortedUsers[chatter];
+    const { messages, context } = users[username];
 
     if (!guess) {
         return json(
-            { hint: new Array(username.length + 1).join('_'), messages },
+            { hint: new Array(username.length + 1).join('_'), messages, context },
             {
                 status: 400
             }
