@@ -11,11 +11,8 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<dialog
-    bind:this={dialog}
-    on:close={() => (showModal = false)}
-    on:click|self={() => dialog.close()}
->
+<!--  on:click|self={() => dialog.close()} -->
+<dialog bind:this={dialog} on:close={() => (showModal = false)}>
     <div on:click|stopPropagation>
         <slot name="header" />
         <slot />

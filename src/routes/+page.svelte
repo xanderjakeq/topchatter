@@ -12,6 +12,35 @@
     let inputElement: HTMLInputElement;
     let inputFocused = false;
 
+    let gaveUp: boolean | undefined;
+
+    const Lgifs = [
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTY4YzM5ZTE1NDFjMzJiNWFkMDVhNGI3NTA5ZDEwZTgzOWQzYmZmOCZjdD1n/YOUsVM7ibNtB1jsnJh/giphy-downsized-large.gif',
+        'https://media.giphy.com/media/PmpOmLzMPb3W1H1dor/giphy-downsized-large.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTdhNmQ1NTlmNDI2OTBmMTUxODJlNmM5OTBiNjM2MDMxM2VhMDJhOCZjdD1n/VwYHKsBaMRlyyJpoXD/giphy.gif',
+        'https://media.giphy.com/media/glHjkjvp8yA0lXi3Nx/giphy.gif',
+        'https://media.giphy.com/media/RcCSH63kZ6gbvFYZVT/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNDljNDFkMjVhZTYyOTdlYTRiYzZlMjQ3MmRlNWFhZjNjNGY4OTc3MyZjdD1n/TQesavVV5gWerCW1IT/giphy.gif',
+        'https://media.giphy.com/media/C5y6jShYRtb2M/giphy.gif',
+        'https://media.giphy.com/media/xUySTZs1ovJygetpYs/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOTI1ZjQ0ZmYwMjM1MGZjOTk5NTg0NzY0ZWRkZmFkZTlmZDg2Yjk1ZiZjdD1n/l1AvAFNrTyM0dnwqs/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOTI1ZjQ0ZmYwMjM1MGZjOTk5NTg0NzY0ZWRkZmFkZTlmZDg2Yjk1ZiZjdD1n/l1AvAFNrTyM0dnwqs/giphy.gif'
+    ];
+
+    const Wgifs = [
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2JlMzUxMjBiZjYzMjkwMWUxMzg0ZmFkY2VkYjJiODVkMTM1ZmVlZiZjdD1n/IfNk3i4219EzTSbxCr/giphy.gif',
+        'https://media.giphy.com/media/jyd3prqhbt0LEKVZ6l/giphy-downsized-large.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZjk4YzdjMWIxMjQxODY5NjA0YjQ3MDgwODY5NTFkZWNjNDdiMGJmYiZjdD1n/iKBBokzokXjuqfWKf5/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWQ3ZmZkOTlmNzc2MTkzZjEwNjNkYjNhMDQ0ZTgyNWRiMmQxZTc5NSZjdD1n/l3J49hMwpCma1lasBB/giphy.gif',
+        'https://media.giphy.com/media/5sjEoGaXPn8AHVO6TY/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDE3OWZhMmQ2MzBmYzE0NmIyZDNjOTY2YWMyOWZkMGVhYzdhMGEwYyZjdD1n/xUPGckJaAwibkfSCkg/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWQ2ZjFmNjBlNzkzZTczZThiYjM0OTgwNDU4ZGIzNjc3Nzg3ZmU5NyZjdD1n/KcoMbJQRBj9GuXhCNp/giphy.gif',
+        'https://media.giphy.com/media/jzaZ23z45UxK8/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZjJhNmY5MDNjZjI1NDdlYmU5MWYwM2Y2MzU4ODE1ODBjYzRlOTBhNyZjdD1n/3o6wNKjI7XkipBHUjK/giphy.gif',
+        'https://media.giphy.com/media/WBhdSWC6RMG95D5DBI/giphy.gif',
+        'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZDAyMDM2MGM4NDdkNGQwZTZiODQxYjY1ODkzZGI2NmMyNjQ5ZTZkYSZjdD1n/eN4masMUHjy3d3OHrh/giphy-downsized-large.gif'
+    ];
+
     $: showModal = (() => {
         if (!lastGuessMatch) {
             return false;
@@ -22,12 +51,28 @@
                 return false;
             }
         }
+        gaveUp = false;
         return true;
     })();
+
+    $: {
+        if (guesses.length > 0 && guesses[0].trim().startsWith(':q')) {
+            gaveUp = true;
+            showModal = true;
+        }
+    }
+
+    $: {
+        console.log('gaveUp?', gaveUp);
+    }
 
     //let showModal = true;
 
     const addGuess = async () => {
+        if (input.length === 0) {
+            return;
+        }
+
         let guessMatch = (await (await fetch(`/api?guess=${input}`)).json()).hint;
 
         let paddedGuess = input;
@@ -53,10 +98,21 @@
         const data = await (await fetch(`/api?guess=${input}`)).json();
         if (data.messages) {
             messages = data.messages;
-            console.log(messages)
         }
         guessMatchs = [data.hint];
         guesses = [new Array(guessMatchs[0].length + 1).join(' ')];
+        showModal = false;
+        gaveUp = undefined;
+    };
+
+    const getRandomInt = (min: number, max: number) => {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min) + min);
+    };
+
+    const getGif = (gifs: string[]) => {
+        return gifs[getRandomInt(0, gifs.length)];
     };
 
     onMount(async () => {
@@ -127,7 +183,7 @@
             class="h-full flex flex-col-reverse py-5
                         overflow-y-scroll "
         >
-            {#each messages as message}
+            {#each messages.slice(0, Math.min(messages.length, guesses.length)) as message}
                 <div class="flex m-5 my-1">
                     <div class="min-w-[10px] bg-purple-500 mr-2" />
                     <p>{message}</p>
@@ -138,11 +194,27 @@
 </div>
 
 <Modal bind:showModal>
-    <h1>You Win!</h1>
-    <p>
-        guesses: {guesses.length - 1}
-    </p>
-    <button on:click={getNewUser} class="rounded-md bg-purple-500 p-2 text-white">
-        play again
-    </button>
+    <div class="flex flex-col">
+        <img alt="gif" src={gaveUp != undefined ? (gaveUp ? getGif(Lgifs) : getGif(Wgifs)) : ''} />
+        <h1 class="text-xl font-bold">
+            {#if gaveUp}
+                wow... ok
+            {/if}
+        </h1>
+        <div class="my-5">
+            <h2 class="text-5xl text-center">
+                {#if gaveUp}
+                    guess we'll never know
+                {:else}
+                    {guesses[0]}
+                {/if}
+            </h2>
+            <p>
+                guesses: {guesses.length - 1}
+            </p>
+        </div>
+        <button on:click={getNewUser} class="rounded-md bg-purple-500 p-2 text-white">
+            play again
+        </button>
+    </div>
 </Modal>
