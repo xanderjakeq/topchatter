@@ -27,6 +27,16 @@ export const GET = (({ url }) => {
     const { messages, context } = users[username];
 
     if (!guess) {
+        delete context.username;
+        delete context["user-id"];
+        delete context["tmi-sent-ts"];
+        delete context["display-name"];
+        delete context["client-nonce"];
+        delete context["id"];
+        delete context["turbo"];
+        delete context["first-message"];
+        delete context["returning-chatter"];
+
         return json(
             { hint: new Array(username.length + 1).join('_'), messages, context },
             {
