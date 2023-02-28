@@ -8,7 +8,7 @@ const opts = {
         username: process.env.BOT_USERNAME,
         password: process.env.BOT_TOKEN
     },
-    channels: ['theprimeagen', 'teej_dv', 'bashbunni']
+    channels: ['theprimeagen', 'teej_dv', 'bashbunni', 'roxcodes']
 };
 
 let exiting = false;
@@ -20,13 +20,28 @@ const client = new tmi.client(opts);
 client.on('message', onMessageHandler);
 client.on('connected', onConnectedHandler);
 
-const stream = {};
+let stream = {};
 
-//TODO: load existing data properly from dirtyData. COMMENT OUT WRITING TO FILE
+try {
+    stream = JSON.parse(
+        fs.readFileSync('./dirtyData.json', {
+            encoding: 'utf8'
+        })
+    );
+} catch (e) {
+    console.log(e);
+}
+
 for (let i = 0; i < opts.channels.length; i++) {
-    stream[opts.channels[i]] = {
-        users: new Map()
-    };
+    if (!stream[opts.channels[i]]) {
+        stream[opts.channels[i]] = {
+            users: new Map()
+        };
+    } else {
+        stream[opts.channels[i]] = {
+            users: new Map(Object.entries(stream[opts.channels[i]].users))
+        };
+    }
 }
 
 // Connect to Twitch:
@@ -39,7 +54,7 @@ function onMessageHandler(target, context, msg, self) {
     } // Ignore messages from the bot
 
     const { username } = context;
-    console.log(".");
+    console.log('.');
 
     const userMap = stream[target].users;
 
