@@ -155,7 +155,7 @@
 
 <div class="flex items-center justify-center h-screen">
     <div class="h-4/6 max-h-[40rem] text-[1.7rem]">
-        <div class="bg-yellow-100 h-full flex flex-col rounded-md">
+        <div class="bg-zinc-700 h-full flex flex-col rounded-md">
             <div class="h-full overflow-y-hidden hover:overflow-y-auto flex flex-col-reverse  pr-1">
                 {#each guesses as guess, i}
                     <div class="flex w-min">
@@ -225,7 +225,7 @@
             </form>
         </div>
     </div>
-    <div class="w-1/3 bg-orange-100 h-4/6 max-h-[40rem] ml-5 rounded-md">
+    <div class="w-1/3 bg-zinc-800 h-4/6 max-h-[40rem] ml-5 rounded-md text-white">
         <div
             class="h-full flex flex-col-reverse py-5 overflow-y-hidden
                         hover:overflow-y-auto"
