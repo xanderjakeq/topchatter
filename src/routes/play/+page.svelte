@@ -9,6 +9,8 @@
     let guesses: string[] = [];
     let guessMatchs: string[] = [];
 
+    let context: Record<string, any>;
+
     $: lastGuessMatch = guessMatchs[0];
 
     let input = '';
@@ -115,6 +117,11 @@
         if (data.messages) {
             messages = data.messages.reverse();
         }
+
+        if (data.context) {
+            context = data.context;
+        }
+
         guessMatchs = [data.hint];
         guesses = [new Array(guessMatchs[0].length + 1).join(' ')];
         showModal = false;
@@ -147,9 +154,9 @@
 </script>
 
 <div class="flex items-center justify-center h-screen">
-    <div class="h-5/6 text-[1.7rem]">
+    <div class="h-4/6 max-h-[40rem] text-[1.7rem]">
         <div class="bg-yellow-100 h-full flex flex-col rounded-md">
-            <div class="h-full overflow-y-scroll flex flex-col-reverse  pr-1">
+            <div class="h-full overflow-y-hidden hover:overflow-y-auto flex flex-col-reverse  pr-1">
                 {#each guesses as guess, i}
                     <div class="flex w-min">
                         {#each guess as char, j}
@@ -193,6 +200,20 @@
             </button>
 
             <form class="h-[0]" on:submit|preventDefault={addGuess}>
+                <div class="text-gray-600 flex items-center">
+                    <div class="flex w-min display-inline ">
+                        {#each ':q' as char}
+                            <span
+                                class="basis-1/2 text-center w-[2ch]
+                                        ml-1 my-2 bg-red-400 text-white
+                                            rounded-md
+                                            ">{char}</span
+                            >
+                        {/each}
+                    </div>
+
+                    <h3 class="ml-1">to quit</h3>
+                </div>
                 <input
                     bind:this={inputElement}
                     size={lastGuessMatch?.length}
@@ -204,18 +225,26 @@
             </form>
         </div>
     </div>
-    <div class="w-1/3 bg-orange-100 h-5/6 ml-5 rounded-md">
+    <div class="w-1/3 bg-orange-100 h-4/6 max-h-[40rem] ml-5 rounded-md">
         <div
-            class="h-full flex flex-col-reverse py-5
-                        overflow-y-scroll "
+            class="h-full flex flex-col-reverse py-5 overflow-y-hidden
+                        hover:overflow-y-auto"
         >
             {#each messages.slice(-Math.min(messages.length, guesses.length)) as message}
                 <div class="flex m-5 my-1">
-                    <div class="min-w-[10px] bg-purple-500 mr-2" />
+                    <div
+                        class="min-w-[10px] mr-2 border
+                        border-purple-500"
+                        style="background: {context.color ? context.color : 'rgb(168 85 247)'}"
+                    />
                     <p>{message}</p>
                 </div>
             {/each}
         </div>
+
+        <h1 class="text-white my-3">
+            by <a href="https://xanderjakeq.page/" class="text-teal-500">@xanderjakeq</a>
+        </h1>
     </div>
 </div>
 
